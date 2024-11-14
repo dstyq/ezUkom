@@ -13,6 +13,7 @@ namespace App\Http\Controllers;
 use App\Models\DataBarang;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class DataBarangController extends Controller
 {
@@ -66,8 +67,13 @@ class DataBarangController extends Controller
     // Menampilkan form untuk mengedit barang
     public function edit($id)
     {
-        $barang = DataBarang::findOrFail($id); // Mengambil data barang berdasarkan ID
-        return view('databarang.edit', compact('barang')); // Mengarahkan ke 'databarang.edit'
+        try {
+            $barang = DataBarang::findOrFail($id); // Mengambil data barang berdasarkan ID
+            return view('databarang.edit', compact('barang')); // Mengarahkan ke 'databarang.edit'
+        } catch (ModelNotFoundException $e) {
+            session()->flash('error', 'Barang dengan ID ' . $id . ' tidak ditemukan!');
+            return redirect()->route('databarang.index');
+        }
     }
 
     // Memperbarui data barang
@@ -83,7 +89,12 @@ class DataBarangController extends Controller
         ]);
 
         // Menemukan barang berdasarkan ID
-        $barang = DataBarang::findOrFail($id);
+        try {
+            $barang = DataBarang::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            session()->flash('error', 'Barang dengan ID ' . $id . ' tidak ditemukan!');
+            return redirect()->route('databarang.index');
+        }
 
         // Mengelola foto jika diupload
         if ($request->hasFile('foto')) {
@@ -115,7 +126,12 @@ class DataBarangController extends Controller
     // Menghapus data barang
     public function destroy($id)
     {
-        $barang = DataBarang::findOrFail($id);
+        try {
+            $barang = DataBarang::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            session()->flash('error', 'Barang dengan ID ' . $id . ' tidak ditemukan!');
+            return redirect()->route('databarang.index');
+        }
 
         if ($barang->foto && file_exists(public_path($barang->foto))) {
             unlink(public_path($barang->foto)); 
@@ -129,7 +145,12 @@ class DataBarangController extends Controller
     // Menampilkan detail barang
     public function show($id)
     {
-        $barang = DataBarang::findOrFail($id);
-        return view('databarang.show', compact('barang')); // Mengarahkan ke 'databarang.show'
+        try {
+            $barang = DataBarang::findOrFail($id);
+            return view('databarang.show', compact('barang')); // Mengarahkan ke 'databarang.show'
+        } catch (ModelNotFoundException $e) {
+            session()->flash('error', 'Barang dengan ID ' . $id . ' tidak ditemukan!');
+            return redirect()->route('databarang.index');
+        }
     }
 }

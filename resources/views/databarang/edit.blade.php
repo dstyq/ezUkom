@@ -5,6 +5,13 @@
 @section('content')
     <h1 class="mt-4">Edit Barang</h1>
 
+    <!-- Menampilkan pesan error jika ada masalah global (seperti ID barang tidak ditemukan) -->
+    @if(session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <!-- Form untuk mengedit barang -->
     <form action="{{ route('databarang.update', $barang->id_barang) }}" method="POST" enctype="multipart/form-data">
         @csrf
