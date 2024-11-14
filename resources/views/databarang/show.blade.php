@@ -13,21 +13,19 @@
             <p><strong>Harga:</strong> {{ number_format($barang->harga, 2, ',', '.') }}</p>
             <p><strong>Stok:</strong> {{ $barang->stok }}</p>
             
-            <!-- Menampilkan Foto Barang jika ada -->
-            @if($barang->foto)
-                <div class="mb-3">
-                    <strong>Foto Barang:</strong><br>
-                    <img src="{{ asset($barang->foto) }}" alt="Foto Barang" width="200"> <!-- Menampilkan foto barang -->
-                </div>
-            @else
-                <p><strong>Foto:</strong> Tidak ada foto</p>
-            @endif
+            <div class="mb-3">
+                <strong>Foto Barang:</strong><br>
+                @if($barang->foto)
+                    <img src="{{ asset($barang->foto) }}" alt="Foto Barang" width="200">
+                @else
+                    <span class="text-warning">Foto Belum Di-upload</span>
+                @endif
+            </div>
 
             <!-- Tombol Edit dan Hapus -->
             <div class="mt-3">
                 <a href="{{ route('databarang.edit', $barang->id_barang) }}" class="btn btn-warning">Edit</a>
                 
-                <!-- Route untuk hapus barang menggunakan method DELETE -->
                 <form action="{{ route('databarang.destroy', $barang->id_barang) }}" method="POST" style="display:inline;">
                     @csrf
                     @method('DELETE')

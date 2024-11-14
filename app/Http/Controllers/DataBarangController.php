@@ -3,11 +3,10 @@
 /**
  * Author: Hadisty Qurratu'Ain
  * Description: Controller untuk mengelola data barang dalam aplikasi. 
- *              Controller ini menangani operasi CRUD untuk data barang.
+ *              Controller ini menangani operasi CRUD untuk data barang
  * Date: 15 November 2024
  * Version: 1.0
  */
-
 
 namespace App\Http\Controllers;
 
@@ -20,14 +19,14 @@ class DataBarangController extends Controller
     // Menampilkan semua barang
     public function index()
     {
-        $barang = DataBarang::all(); 
-        return view('databarang.index', compact('barang'));  // Kirim variabel barang ke view 'databarang.index'
+        $barang = DataBarang::all();
+        return view('databarang.index', compact('barang')); 
     }
 
     // Menampilkan form untuk menambah barang
     public function create()
     {
-        return view('databarang.create'); 
+        return view('databarang.create');
     }
 
     // Menyimpan data barang baru
@@ -39,18 +38,16 @@ class DataBarangController extends Controller
             'nama_barang' => 'required|string|max:255',
             'harga' => 'required|integer',
             'stok' => 'required|integer',
-            'foto' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+            'foto' => 'required|image|mimes:jpg,png,jpeg|max:2048',
         ]);
 
         // Path buat foto 
         $fotoPath = null;
 
         if ($request->hasFile('foto')) {
-            // nyimpen foto ke folder public/foto
             $fotoName = time() . '.' . $request->file('foto')->getClientOriginalExtension();
-            $fotoPath = public_path('foto') . '/' . $fotoName;  
-            $request->file('foto')->move(public_path('foto'), $fotoName);  
-            // nyimpen path relatif foto
+            $fotoPath = public_path('foto') . '/' . $fotoName;
+            $request->file('foto')->move(public_path('foto'), $fotoName);
             $fotoPath = 'foto/' . $fotoName;
         }
 
@@ -84,26 +81,26 @@ class DataBarangController extends Controller
             'stok' => 'required|integer',
             'foto' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
         ]);
-    
+
         // Menemukan barang berdasarkan ID
         $barang = DataBarang::findOrFail($id);
-    
+
         // Mengelola foto jika diupload
         if ($request->hasFile('foto')) {
             // Hapus foto lama jika ada
             if ($barang->foto && file_exists(public_path($barang->foto))) {
                 unlink(public_path($barang->foto));  // Menghapus foto lama
             }
-    
+
             // Menyimpan foto baru ke folder public/foto
             $fotoName = time() . '.' . $request->file('foto')->getClientOriginalExtension();
             $fotoPath = 'foto/' . $fotoName;
             $request->file('foto')->move(public_path('foto'), $fotoName);
-    
+
             // Update foto path di database
             $barang->foto = $fotoPath;
         }
-    
+
         // Memperbarui data barang tanpa mengubah foto jika foto tidak diupload
         $barang->update([
             'id_barang' => $request->id_barang,
@@ -111,21 +108,19 @@ class DataBarangController extends Controller
             'harga' => $request->harga,
             'stok' => $request->stok,
         ]);
-    
+
         return redirect()->route('databarang.index')->with('success', 'Barang berhasil diperbarui!');
     }
-    
+
     // Menghapus data barang
     public function destroy($id)
     {
         $barang = DataBarang::findOrFail($id);
 
-        // Hapus foto jika ada
         if ($barang->foto && file_exists(public_path($barang->foto))) {
-            unlink(public_path($barang->foto)); // Menghapus foto
+            unlink(public_path($barang->foto)); 
         }
 
-        // Menghapus barang dari database
         $barang->delete();
 
         return redirect()->route('databarang.index')->with('success', 'Barang berhasil dihapus!');

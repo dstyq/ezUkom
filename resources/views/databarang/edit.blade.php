@@ -1,52 +1,66 @@
 @extends('layouts.app')
 
+@section('title', 'Edit Barang')
+
 @section('content')
-<h1>Daftar Barang</h1>
-<a href="{{ route('databarang.create') }}" class="btn btn-primary mb-3">Tambah Barang</a>
+    <h1 class="mt-4">Edit Barang</h1>
 
-@if(session('success'))
-<div class="alert alert-success">
-    {{ session('success') }}
-</div>
-@endif
+    <!-- Form untuk mengedit barang -->
+    <form action="{{ route('databarang.update', $barang->id_barang) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        @method('PUT') 
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID Barang</th>
-            <th>Nama Barang</th>
-            <th>Harga</th>
-            <th>Stok</th>
-            <th>Foto</th>
-            <th>Aksi</th>
-        </tr>
-    </thead>
-    <tbody>
-    @foreach ($barang as $item)
-    <tr>
-        <td>{{ $item->id_barang }}</td>
-        <td>{{ $item->nama_barang }}</td>
-        <td>{{ number_format($item->harga, 0, ',', '.') }}</td>
-        <td>{{ $item->stok }}</td>
-        <td>
-            @if($item->foto)
-                <img src="{{ asset($item->foto) }}" alt="Foto Barang" width="50" class="img-fluid">
-            @else
-                <span>No Image</span>
+        <!-- ID Barang -->
+        <div class="form-group">
+            <label for="id_barang">ID Barang</label>
+            <input type="text" name="id_barang" id="id_barang" class="form-control" value="{{ old('id_barang', $barang->id_barang) }}" required>
+            @error('id_barang')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <!-- Nama Barang -->
+        <div class="form-group">
+            <label for="nama_barang">Nama Barang</label>
+            <input type="text" name="nama_barang" id="nama_barang" class="form-control" value="{{ old('nama_barang', $barang->nama_barang) }}" required>
+            @error('nama_barang')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <!-- Harga -->
+        <div class="form-group">
+            <label for="harga">Harga</label>
+            <input type="number" name="harga" id="harga" class="form-control" step="0.01" value="{{ old('harga', $barang->harga) }}" required>
+            @error('harga')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <!-- Stok -->
+        <div class="form-group">
+            <label for="stok">Stok</label>
+            <input type="number" name="stok" id="stok" class="form-control" value="{{ old('stok', $barang->stok) }}" required>
+            @error('stok')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <!-- Foto Barang -->
+        <div class="form-group">
+            <label for="foto">Foto Barang</label>
+            <input type="file" name="foto" id="foto" class="form-control">
+            @if ($barang->foto)
+                <p>Foto Saat Ini:</p>
+                <img src="{{ asset($barang->foto) }}" width="100" class="img-fluid">
             @endif
-        </td>
-        <td>
-            <a href="{{ route('databarang.show', $item->id_barang) }}" class="btn btn-info btn-sm">Detail</a>
-            <a href="{{ route('databarang.edit', $item->id_barang) }}" class="btn btn-warning btn-sm">Edit</a>
-            <form action="{{ route('databarang.destroy', $item->id_barang) }}" method="POST" style="display:inline;">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
-            </form>
-        </td>
-    </tr>
-    @endforeach
-    </tbody>
-</table>
+            @error('foto')
+                <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
 
+        <!-- Tombol untuk submit -->
+        <button type="submit" class="btn btn-primary">Perbarui</button>
+        <a href="{{ route('databarang.index') }}" class="btn btn-secondary">Kembali</a>
+    </form>
 @endsection

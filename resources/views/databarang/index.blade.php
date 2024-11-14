@@ -32,7 +32,7 @@
             @if($item->foto)
                 <img src="{{ asset($item->foto) }}" alt="Foto Barang" width="50" class="img-fluid">
             @else
-                <span>No Image</span>
+                <span class="text-warning">Foto Belum Di-upload</span>
             @endif
         </td>
         <td>
